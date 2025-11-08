@@ -26,23 +26,30 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function verificationLinkService(email: string) {
+  console.log("📩 verificationLinkService called with:", email);
   const targetPath = path.join(__dirname, "../templates", "registration.hbs");
+  console.log("📂 Looking for template at:", targetPath);
   try {
     const user = await getUserByEmail(email);
+    console.log("👤 getUserByEmail result:", user);
+
     if (user) throw createCustomError(401, "User already exists");
     const payload = {
       email,
     };
 
     const token = sign(payload, SECRET_KEY, { expiresIn: "5m" });
+    console.log("🔑 Token generated:", token);
 
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      console.log("💾 Saving token...");
       await tx.registerToken.create({
         data: {
           token,
         },
       });
 
+      console.log("📖 Reading template...");
       const templateSrc = fs.readFileSync(targetPath, "utf-8");
       const compiledTemplate = compile(templateSrc);
 
@@ -50,13 +57,16 @@ export async function verificationLinkService(email: string) {
         redirect_url: `${BASE_WEB_URL}/auth/verify?token=${token}`,
       });
 
+      console.log("📧 Sending email to:", email);
       await transporter.sendMail({
         to: email,
         subject: "Registration",
         html,
       });
+      console.log("✅ Email sent successfully!");
     });
   } catch (err) {
+    console.error("❌ verificationLinkService ERROR:", err);
     throw err;
   }
 }

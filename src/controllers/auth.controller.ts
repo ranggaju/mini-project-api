@@ -32,7 +32,7 @@ export async function verifyController(
     const authHeader = req.headers.authorization as string;
     const token = authHeader.split(" ")[1];
 
-    const { email } = req.user as Token;
+    const { email } = req.registerUser! ;
     const { firstname, lastname, password } = req.body;
     await verifyService(token, {
       email,
