@@ -41,6 +41,7 @@ model User {
   pointsBalance   Int               @default(0)
   createdAt       DateTime          @default(now())
   user_img        String?
+  isVerified Boolean @default(false)
 
   // Relations
   events          Event[]           @relation("OrganizerEvents")
@@ -130,6 +131,7 @@ model Voucher {
 }
 
 model RegisterToken {
-  id Int @id @default(autoincrement())
-  token String @unique
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
 }
