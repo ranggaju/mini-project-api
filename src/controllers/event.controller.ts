@@ -1,6 +1,69 @@
 import { Request, Response, NextFunction } from "express";
-import { getAllEvents, getEventBySlug } from "../services/event.service";
+import {
+  addTicketTypes,
+  createEvent,
+  createVoucher,
+  getAllEvents,
+  getEventBySlug,
+  getMyEvents,
+  setEventStatus,
+  updateEvent,
+} from "../services/event.service";
 import { Prisma } from "@prisma/client";
+import { Token } from "../middlewares/auth.middleware";
+import { toSlug } from "../lib/slug";
+
+export async function createEventController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user as Token;
+    const body = req.body;
+    const file = req.file as Express.Multer.File | undefined;
+
+    const slug = toSlug(body.title);
+
+    const data = await createEvent(user.email, file, {
+      title: body.title,
+      description: body.description,
+      category: body.category,
+      location: body.location,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      price: Number(body.price),
+      availableSeats: Number(body.availableSeats),
+      status: body.status,
+      slug,
+    });
+
+    res.status(201).json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateEventController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const data = await updateEvent(id, req.body);
+
+    res.json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
 
 export async function getEventBySlugController(
   req: Request,
@@ -149,6 +212,139 @@ export async function getAllEventsController(
     );
 
     res.json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getMyEventsController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user as Token;
+    const { page, pageSize, status } = req.query;
+    const pageNum = page ? Number(page) : 1;
+    const pageSizeNum = pageSize ? Number(pageSize) : 12;
+
+    const data = await getMyEvents(
+      user.email,
+      pageNum,
+      pageSizeNum,
+      status as any
+    );
+
+    res.json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function publihsEventController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user as Token;
+    const { id } = req.params;
+
+    const data = await setEventStatus(
+      id,
+      {
+        email: user.email,
+        role: user.role as any,
+      },
+      "PUBLISHED"
+    );
+
+    res.json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function cancelEventController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user as Token;
+    const { id } = req.params;
+
+    const data = await setEventStatus(
+      id,
+      {
+        email: user.email,
+        role: user.role as any,
+      },
+      "CANCEL"
+    );
+
+    res.json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createTicketTypesController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const { items } = req.body as {
+      items: {
+        name: string;
+        description?: string;
+        price: number;
+        quota: number;
+      }[];
+    };
+
+    const data = await addTicketTypes(id, items);
+
+    res.status(201).json({
+      message: "OK",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createVoucherController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const payload = req.body as {
+      code: string;
+      discountAmount: number;
+      expiredAt: string;
+      maxUsage?: number;
+    };
+
+    const data = await createVoucher(id, payload);
+
+    res.status(201).json({
       message: "OK",
       data,
     });
