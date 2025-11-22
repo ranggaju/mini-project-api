@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14,26 +14,26 @@ export async function getAllEvents(req: Request, res: Response) {
             id: true,
             firstname: true,
             lastname: true,
-            email: true
-          }
+            email: true,
+          },
         },
         _count: {
           select: {
             transaction: true,
             review: true,
             ticketType: true,
-            voucher: true
-          }
-        }
+            voucher: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     res.json({
       message: "OK",
-      data: events
+      data: events,
     });
   } catch (error) {
     console.error("getAllEvents error:", error);
@@ -54,8 +54,8 @@ export async function getEventById(req: Request, res: Response) {
             firstname: true,
             lastname: true,
             email: true,
-            profilePicture: true
-          }
+            profilePicture: true,
+          },
         },
         ticketType: true,
         voucher: true,
@@ -65,29 +65,29 @@ export async function getEventById(req: Request, res: Response) {
               select: {
                 firstname: true,
                 lastname: true,
-                email: true
-              }
+                email: true,
+              },
             },
-            transactionItem: true
-          }
+            transactionItem: true,
+          },
         },
         review: {
           include: {
             user: {
               select: {
                 firstname: true,
-                lastname: true
-              }
-            }
-          }
+                lastname: true,
+              },
+            },
+          },
         },
         _count: {
           select: {
             transaction: true,
-            review: true
-          }
-        }
-      }
+            review: true,
+          },
+        },
+      },
     });
 
     if (!event) {
@@ -96,7 +96,7 @@ export async function getEventById(req: Request, res: Response) {
 
     res.json({
       message: "OK",
-      data: event
+      data: event,
     });
   } catch (error) {
     console.error("getEventById error:", error);
@@ -109,29 +109,31 @@ export async function approveEvent(req: Request, res: Response) {
     const { eventId } = req.params;
 
     const event = await prisma.event.findUnique({
-      where: { id: eventId }
+      where: { id: eventId },
     });
 
     if (!event) {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    if (event.status !== 'DRAFT') {
-      return res.status(400).json({ error: "Only draft events can be approved" });
+    if (event.status !== "DRAFT") {
+      return res
+        .status(400)
+        .json({ error: "Only draft events can be approved" });
     }
 
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
-      data: { status: 'PUBLISHED' },
+      data: { status: "PUBLISHED" },
       include: {
         organizer: {
           select: {
             firstname: true,
             lastname: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     });
 
     // Send notification to organizer
@@ -140,13 +142,13 @@ export async function approveEvent(req: Request, res: Response) {
         userId: event.organizerId,
         title: "Event Approved",
         message: `Your event "${event.title}" has been approved and is now published.`,
-        type: "SYSTEM"
-      }
+        type: "SYSTEM",
+      },
     });
 
     res.json({
       message: "Event approved successfully",
-      data: updatedEvent
+      data: updatedEvent,
     });
   } catch (error) {
     console.error("approveEvent error:", error);
@@ -159,7 +161,7 @@ export async function rejectEvent(req: Request, res: Response) {
     const { eventId } = req.params;
 
     const event = await prisma.event.findUnique({
-      where: { id: eventId }
+      where: { id: eventId },
     });
 
     if (!event) {
@@ -168,16 +170,16 @@ export async function rejectEvent(req: Request, res: Response) {
 
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
-      data: { status: 'CANCEL' },
+      data: { status: "CANCELED" },
       include: {
         organizer: {
           select: {
             firstname: true,
             lastname: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     });
 
     // Send notification to organizer
@@ -186,13 +188,13 @@ export async function rejectEvent(req: Request, res: Response) {
         userId: event.organizerId,
         title: "Event Rejected",
         message: `Your event "${event.title}" has been rejected. Please contact support for more information.`,
-        type: "SYSTEM"
-      }
+        type: "SYSTEM",
+      },
     });
 
     res.json({
       message: "Event rejected",
-      data: updatedEvent
+      data: updatedEvent,
     });
   } catch (error) {
     console.error("rejectEvent error:", error);
@@ -209,10 +211,10 @@ export async function deleteEvent(req: Request, res: Response) {
       include: {
         _count: {
           select: {
-            transaction: true
-          }
-        }
-      }
+            transaction: true,
+          },
+        },
+      },
     });
 
     if (!event) {
@@ -221,17 +223,18 @@ export async function deleteEvent(req: Request, res: Response) {
 
     // Check if event has transactions
     if (event._count.transaction > 0) {
-      return res.status(400).json({ 
-        error: "Cannot delete event with existing transactions. Cancel it instead." 
+      return res.status(400).json({
+        error:
+          "Cannot delete event with existing transactions. Cancel it instead.",
       });
     }
 
     await prisma.event.delete({
-      where: { id: eventId }
+      where: { id: eventId },
     });
 
     res.json({
-      message: "Event deleted successfully"
+      message: "Event deleted successfully",
     });
   } catch (error) {
     console.error("deleteEvent error:", error);
@@ -257,18 +260,18 @@ export async function getAllUsers(req: Request, res: Response) {
           select: {
             event: true,
             transaction: true,
-            review: true
-          }
-        }
+            review: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     res.json({
       message: "OK",
-      data: users
+      data: users,
     });
   } catch (error) {
     console.error("getAllUsers error:", error);
@@ -281,18 +284,18 @@ export async function updateUserRole(req: Request, res: Response) {
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!['ADMIN', 'ORGANIZER', 'CUSTOMER'].includes(role)) {
+    if (!["ADMIN", "ORGANIZER", "CUSTOMER"].includes(role)) {
       return res.status(400).json({ error: "Invalid role" });
     }
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { role }
+      data: { role },
     });
 
     res.json({
       message: "User role updated successfully",
-      data: user
+      data: user,
     });
   } catch (error) {
     console.error("updateUserRole error:", error);
@@ -310,11 +313,11 @@ export async function deleteUser(req: Request, res: Response) {
     }
 
     await prisma.user.delete({
-      where: { id: userId }
+      where: { id: userId },
     });
 
     res.json({
-      message: "User deleted successfully"
+      message: "User deleted successfully",
     });
   } catch (error) {
     console.error("deleteUser error:", error);
@@ -332,30 +335,30 @@ export async function getAllTransactions(req: Request, res: Response) {
           select: {
             firstname: true,
             lastname: true,
-            email: true
-          }
+            email: true,
+          },
         },
         event: {
           select: {
             title: true,
             slug: true,
-            category: true
-          }
+            category: true,
+          },
         },
         transactionItem: {
           include: {
-            ticketType: true
-          }
-        }
+            ticketType: true,
+          },
+        },
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     res.json({
       message: "OK",
-      data: transactions
+      data: transactions,
     });
   } catch (error) {
     console.error("getAllTransactions error:", error);
@@ -369,12 +372,12 @@ export async function updateTransactionStatus(req: Request, res: Response) {
     const { status } = req.body;
 
     const validStatuses = [
-      'WAITING_PAYMENT',
-      'WAITING_CONFIRMATION',
-      'DONE',
-      'REJECTED',
-      'EXPIRED',
-      'CANCELED'
+      "WAITING_PAYMENT",
+      "WAITING_CONFIRMATION",
+      "DONE",
+      "REJECTED",
+      "EXPIRED",
+      "CANCELED",
     ];
 
     if (!validStatuses.includes(status)) {
@@ -383,7 +386,7 @@ export async function updateTransactionStatus(req: Request, res: Response) {
 
     const transaction = await prisma.transaction.update({
       where: { id: transactionId },
-      data: { status }
+      data: { status },
     });
 
     // Send notification to user
@@ -392,13 +395,13 @@ export async function updateTransactionStatus(req: Request, res: Response) {
         userId: transaction.userId,
         title: "Transaction Status Updated",
         message: `Your transaction status has been updated to ${status}`,
-        type: "TRANSACTION"
-      }
+        type: "TRANSACTION",
+      },
     });
 
     res.json({
       message: "Transaction status updated successfully",
-      data: transaction
+      data: transaction,
     });
   } catch (error) {
     console.error("updateTransactionStatus error:", error);
