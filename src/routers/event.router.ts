@@ -39,7 +39,6 @@ eventRouter.patch(
 );
 eventRouter.get("/", getAllEventsController);
 eventRouter.get("/categories", getEventCategoriesController);
-eventRouter.get("/:slug", getEventBySlugController);
 eventRouter.get(
   "/me",
   authMiddleware,
@@ -72,5 +71,6 @@ eventRouter.post(
   validateRequest(voucherCreateSchema),
   createVoucherController
 );
+eventRouter.get("/:slug", getEventBySlugController);
 
 export default eventRouter;
