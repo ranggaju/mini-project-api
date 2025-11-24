@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import {
   // Event Services
   getAllEventsService,
@@ -12,8 +12,8 @@ import {
   deleteUserService,
   // Transaction Services
   getAllTransactionsService,
-  updateTransactionStatusService
-} from '../services/admin.service';
+  updateTransactionStatusService,
+} from "../services/admin.service";
 
 //EVENT CONTROLLERS
 export async function getAllEvents(req: Request, res: Response) {
@@ -22,7 +22,7 @@ export async function getAllEvents(req: Request, res: Response) {
 
     res.json({
       message: "OK",
-      data: events
+      data: events,
     });
   } catch (error) {
     console.error("getAllEvents error:", error);
@@ -37,12 +37,12 @@ export async function getEventById(req: Request, res: Response) {
 
     res.json({
       message: "OK",
-      data: event
+      data: event,
     });
   } catch (error: any) {
     console.error("getEventById error:", error);
 
-    if (error.message === 'EVENT_NOT_FOUND') {
+    if (error.message === "EVENT_NOT_FOUND") {
       return res.status(404).json({ error: "Event not found" });
     }
 
@@ -57,17 +57,19 @@ export async function approveEvent(req: Request, res: Response) {
 
     res.json({
       message: "Event approved successfully",
-      data: updatedEvent
+      data: updatedEvent,
     });
   } catch (error: any) {
     console.error("approveEvent error:", error);
 
-    if (error.message === 'EVENT_NOT_FOUND') {
+    if (error.message === "EVENT_NOT_FOUND") {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    if (error.message === 'ONLY_DRAFT_CAN_BE_APPROVED') {
-      return res.status(400).json({ error: "Only draft events can be approved" });
+    if (error.message === "ONLY_DRAFT_CAN_BE_APPROVED") {
+      return res
+        .status(400)
+        .json({ error: "Only draft events can be approved" });
     }
 
     res.status(500).json({ error: "Internal server error" });
@@ -81,12 +83,12 @@ export async function rejectEvent(req: Request, res: Response) {
 
     res.json({
       message: "Event rejected",
-      data: updatedEvent
+      data: updatedEvent,
     });
   } catch (error: any) {
     console.error("rejectEvent error:", error);
 
-    if (error.message === 'EVENT_NOT_FOUND') {
+    if (error.message === "EVENT_NOT_FOUND") {
       return res.status(404).json({ error: "Event not found" });
     }
 
@@ -100,18 +102,19 @@ export async function deleteEvent(req: Request, res: Response) {
     await deleteEventService(eventId);
 
     res.json({
-      message: "Event deleted successfully"
+      message: "Event deleted successfully",
     });
   } catch (error: any) {
     console.error("deleteEvent error:", error);
 
-    if (error.message === 'EVENT_NOT_FOUND') {
+    if (error.message === "EVENT_NOT_FOUND") {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    if (error.message === 'HAS_TRANSACTIONS') {
-      return res.status(400).json({ 
-        error: "Cannot delete event with existing transactions. Cancel it instead." 
+    if (error.message === "HAS_TRANSACTIONS") {
+      return res.status(400).json({
+        error:
+          "Cannot delete event with existing transactions. Cancel it instead.",
       });
     }
 
@@ -131,7 +134,7 @@ export async function getAllUsers(req: Request, res: Response) {
 
     res.json({
       message: "OK",
-      data: users
+      data: users,
     });
   } catch (error) {
     console.error("getAllUsers error:", error);
@@ -148,12 +151,12 @@ export async function updateUserRole(req: Request, res: Response) {
 
     res.json({
       message: "User role updated successfully",
-      data: user
+      data: user,
     });
   } catch (error: any) {
     console.error("updateUserRole error:", error);
 
-    if (error.message === 'INVALID_ROLE') {
+    if (error.message === "INVALID_ROLE") {
       return res.status(400).json({ error: "Invalid role" });
     }
 
@@ -173,12 +176,12 @@ export async function deleteUser(req: Request, res: Response) {
     await deleteUserService(userId, currentUserId);
 
     res.json({
-      message: "User deleted successfully"
+      message: "User deleted successfully",
     });
   } catch (error: any) {
     console.error("deleteUser error:", error);
 
-    if (error.message === 'CANNOT_DELETE_SELF') {
+    if (error.message === "CANNOT_DELETE_SELF") {
       return res.status(400).json({ error: "Cannot delete your own account" });
     }
 
@@ -193,7 +196,7 @@ export async function getAllTransactions(req: Request, res: Response) {
 
     res.json({
       message: "OK",
-      data: transactions
+      data: transactions,
     });
   } catch (error) {
     console.error("getAllTransactions error:", error);
@@ -206,16 +209,19 @@ export async function updateTransactionStatus(req: Request, res: Response) {
     const { transactionId } = req.params;
     const { status } = req.body;
 
-    const transaction = await updateTransactionStatusService(transactionId, status);
+    const transaction = await updateTransactionStatusService(
+      transactionId,
+      status
+    );
 
     res.json({
       message: "Transaction status updated successfully",
-      data: transaction
+      data: transaction,
     });
   } catch (error: any) {
     console.error("updateTransactionStatus error:", error);
 
-    if (error.message === 'INVALID_STATUS') {
+    if (error.message === "INVALID_STATUS") {
       return res.status(400).json({ error: "Invalid status" });
     }
 
