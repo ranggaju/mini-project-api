@@ -10,7 +10,6 @@ import {
   cancelEventController,
   createTicketTypesController,
   createVoucherController,
-  getMyEventsAdvancedController,
 } from "../controllers/event.controller";
 import { authMiddleware, roleGuard } from "../middlewares/auth.middleware";
 import { uploader } from "../utils/uploader";
@@ -41,6 +40,7 @@ eventRouter.patch(
 );
 
 eventRouter.get("/", getAllEventsController);
+
 eventRouter.get("/categories", getEventCategoriesController);
 
 eventRouter.get(
@@ -48,13 +48,6 @@ eventRouter.get(
   authMiddleware,
   roleGuard(["ADMIN", "ORGANIZER"]),
   getMyEventsController
-);
-
-eventRouter.get(
-  "/me/adv",
-  authMiddleware,
-  roleGuard(["ADMIN", "ORGANIZER"]),
-  getMyEventsAdvancedController
 );
 
 eventRouter.patch(
