@@ -74,7 +74,7 @@ export async function updateEvent(id: string, params: Prisma.EventUpdateInput) {
       data: {
         ...params,
         ...(start ? { startDate: start } : {}),
-        ...(start ? { endDate: start } : {}),
+        ...(end ? { endDate: end } : {}),
       },
     });
 
@@ -306,39 +306,6 @@ export async function addTicketTypes(
 
       return created;
     });
-  } catch (err) {
-    throw err;
-  }
-}
-
-export async function createVoucher(
-  eventId: string,
-  params: {
-    code: string;
-    discountAmount: number;
-    expiredAt: string;
-    maxUsage?: number;
-  }
-) {
-  try {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      select: { id: true },
-    });
-
-    if (!event) throw createCustomError(404, "Event not found");
-
-    const voucher = await prisma.voucher.create({
-      data: {
-        eventId,
-        code: params.code,
-        discountAmount: params.discountAmount,
-        expiredAt: params.expiredAt,
-        maxUsage: params.maxUsage,
-      },
-    });
-
-    return voucher;
   } catch (err) {
     throw err;
   }

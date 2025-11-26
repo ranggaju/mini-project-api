@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import {
   addTicketTypes,
   createEvent,
-  createVoucher,
   getAllEvents,
   getEventBySlug,
   getEventCategories,
@@ -345,31 +344,6 @@ export async function createTicketTypesController(
     };
 
     const data = await addTicketTypes(id, items);
-
-    res.status(201).json({
-      message: "OK",
-      data,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function createVoucherController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { id } = req.params;
-    const payload = req.body as {
-      code: string;
-      discountAmount: number;
-      expiredAt: string;
-      maxUsage?: number;
-    };
-
-    const data = await createVoucher(id, payload);
 
     res.status(201).json({
       message: "OK",

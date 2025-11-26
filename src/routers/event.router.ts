@@ -9,7 +9,6 @@ import {
   publihsEventController,
   cancelEventController,
   createTicketTypesController,
-  createVoucherController,
 } from "../controllers/event.controller";
 import { authMiddleware, roleGuard } from "../middlewares/auth.middleware";
 import { uploader } from "../utils/uploader";
@@ -17,7 +16,6 @@ import { validateRequest } from "../middlewares/validate.middleware";
 import {
   eventCreateSchema,
   ticketTypeCreateSchema,
-  voucherCreateSchema,
 } from "../schemas/event.schema";
 
 export const eventRouter = Router();
@@ -70,14 +68,6 @@ eventRouter.post(
   roleGuard(["ADMIN", "ORGANIZER"]),
   validateRequest(ticketTypeCreateSchema),
   createTicketTypesController
-);
-
-eventRouter.post(
-  "/:id/vouchers",
-  authMiddleware,
-  roleGuard(["ADMIN", "ORGANIZER"]),
-  validateRequest(voucherCreateSchema),
-  createVoucherController
 );
 
 eventRouter.get("/:slug", getEventBySlugController);
