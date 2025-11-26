@@ -9,8 +9,6 @@ import {
   publihsEventController,
   cancelEventController,
   createTicketTypesController,
-  updateTicketTypeController,
-  deleteTicketTypeController,
   createVoucherController,
 } from "../controllers/event.controller";
 import { authMiddleware, roleGuard } from "../middlewares/auth.middleware";
@@ -72,20 +70,6 @@ eventRouter.post(
   roleGuard(["ADMIN", "ORGANIZER"]),
   validateRequest(ticketTypeCreateSchema),
   createTicketTypesController
-);
-
-eventRouter.patch(
-  "/:id/tickets/:ticketId",
-  authMiddleware,
-  roleGuard(["ADMIN", "ORGANIZER"]),
-  updateTicketTypeController
-);
-
-eventRouter.delete(
-  "/:id/tickets/:ticketId",
-  authMiddleware,
-  roleGuard(["ADMIN", "ORGANIZER"]),
-  deleteTicketTypeController
 );
 
 eventRouter.post(
