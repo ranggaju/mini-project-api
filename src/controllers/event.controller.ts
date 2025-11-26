@@ -9,8 +9,6 @@ import {
   getMyEvents,
   setEventStatus,
   updateEvent,
-  updateTicketType,
-  deleteTicketType,
 } from "../services/event.service";
 import { Prisma } from "@prisma/client";
 import { Token } from "../middlewares/auth.middleware";
@@ -22,47 +20,24 @@ export async function createEventController(
   next: NextFunction
 ) {
   try {
-    console.log("=== Create Event Request ===");
-    console.log("Body (before parse):", req.body);
-    console.log("File:", req.file);
-
     const user = req.user as Token;
     const body = req.body;
     const file = req.file as Express.Multer.File | undefined;
 
-    const parsedBody = {
-      ...body,
-      price: parseFloat(body.price),
-      availableSeats: parseInt(body.availableSeats),
-    };
-
-    console.log("Body (after parse):", parsedBody);
-
-    const slug = toSlug(parsedBody.title);
+    const slug = toSlug(body.title);
 
     const data = await createEvent(user.email, file, {
-      title: parsedBody.title,
-      description: parsedBody.description,
-      category: parsedBody.category,
-      location: parsedBody.location,
-      startDate: parsedBody.startDate,
-      endDate: parsedBody.endDate,
-      price: parsedBody.price,
-      availableSeats: parsedBody.availableSeats,
-      status: parsedBody.status,
+      title: body.title,
+      description: body.description,
+      category: body.category,
+      location: body.location,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      price: Number(body.price),
+      availableSeats: Number(body.availableSeats),
+      status: body.status,
       slug,
     });
-
-    const ticketData = await addTicketTypes(data.id, [
-      {
-        name: "Regular Ticket", // Nama tiket default
-        description: `Tiket standar untuk event ${parsedBody.title}`,
-        price: parsedBody.price, // Ambil harga dari input event
-        quota: parsedBody.availableSeats, // Ambil kuota dari availableSeats
-      },
-    ]);
-    
-    console.log("Tiket berhasil dibuat:", ticketData);
 
     res.status(201).json({
       message: "OK",
@@ -372,63 +347,6 @@ export async function createTicketTypesController(
     const data = await addTicketTypes(id, items);
 
     res.status(201).json({
-      message: "OK",
-      data,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function updateTicketTypeController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { id, ticketId } = req.params;
-    const body = req.body as {
-      name?: string;
-      description?: string;
-      price?: number | string;
-      quota?: number | string;
-    };
-
-    const payload = {
-      name: body.name,
-      description: body.description,
-      price:
-        body.price !== undefined
-          ? Number(body.price as number | string)
-          : undefined,
-      quota:
-        body.quota !== undefined
-          ? Number(body.quota as number | string)
-          : undefined,
-    };
-
-    const data = await updateTicketType(id, ticketId, payload);
-
-    res.json({
-      message: "OK",
-      data,
-    });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function deleteTicketTypeController(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { id, ticketId } = req.params;
-
-    const data = await deleteTicketType(id, ticketId);
-
-    res.json({
       message: "OK",
       data,
     });
