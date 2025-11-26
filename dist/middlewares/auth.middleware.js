@@ -26,16 +26,15 @@ function authMiddleware(req, res, next) {
 }
 function roleGuard(allowedRoles) {
     return (req, res, next) => {
-        var _a;
         console.log("🟡 roleGuard executing for roles:", allowedRoles);
-        console.log("🟡 User role:", (_a = req.user) === null || _a === void 0 ? void 0 : _a.role);
+        console.log("🟡 User role:", req.user?.role);
         try {
             const user = req.user;
             if (!user) {
                 console.log("❌ No user in request");
                 throw (0, customError_1.createCustomError)(401, "invalid token");
             }
-            if (!allowedRoles.includes(user === null || user === void 0 ? void 0 : user.role)) {
+            if (!allowedRoles.includes(user?.role)) {
                 console.log("❌ User role not in allowed roles");
                 throw (0, customError_1.createCustomError)(401, "Insufficient permissions");
             }

@@ -17,9 +17,8 @@ const customError_1 = require("../utils/customError");
 const auth_service_1 = require("./auth.service");
 const cloudnary_1 = require("../utils/cloudnary");
 async function createEvent(email, imgFile, params) {
-    var _a;
     const uploaded = imgFile ? await (0, cloudnary_1.cloudinaryUpload)(imgFile) : null;
-    const uploadUrl = uploaded === null || uploaded === void 0 ? void 0 : uploaded.secure_url;
+    const uploadUrl = uploaded?.secure_url;
     try {
         // Ambil user
         const user = await (0, auth_service_1.getUserByEmail)(email);
@@ -42,7 +41,7 @@ async function createEvent(email, imgFile, params) {
                 price: params.price,
                 availableSeats: params.availableSeats,
                 slug: params.slug,
-                status: (_a = params.status) !== null && _a !== void 0 ? _a : "DRAFT",
+                status: params.status ?? "DRAFT",
                 bannerImg: uploadUrl,
                 organizerId: user.id,
                 // TicketType default
@@ -82,7 +81,11 @@ async function updateEvent(id, params) {
         }
         const event = await prisma_1.default.event.update({
             where: { id },
-            data: Object.assign(Object.assign(Object.assign({}, params), (start ? { startDate: start } : {})), (start ? { endDate: start } : {})),
+            data: {
+                ...params,
+                ...(start ? { startDate: start } : {}),
+                ...(start ? { endDate: start } : {}),
+            },
         });
         return event;
     }
@@ -145,7 +148,7 @@ async function getAllEvents(page = 1, pageSize = 12, filter, sort = "newest") {
                 mode: "insensitive",
             };
         }
-        const where = Object.assign({ status: "PUBLISHED" }, filter);
+        const where = { status: "PUBLISHED", ...filter };
         const orderBy = sort === "oldest"
             ? { createdAt: "asc" }
             : sort === "price_asc"
@@ -244,20 +247,16 @@ async function addTicketTypes(eventId, items) {
         if (!event)
             throw (0, customError_1.createCustomError)(404, "Event not found");
         return await prisma_1.default.$transaction(async (tx) => {
-            var _a;
-            const created = await Promise.all(items.map((i) => {
-                var _a;
-                return tx.ticketType.create({
-                    data: {
-                        eventId,
-                        name: i.name,
-                        description: (_a = i.description) !== null && _a !== void 0 ? _a : "",
-                        price: i.price,
-                        quota: i.quota,
-                        availableQuota: i.quota,
-                    },
-                });
-            }));
+            const created = await Promise.all(items.map((i) => tx.ticketType.create({
+                data: {
+                    eventId,
+                    name: i.name,
+                    description: i.description ?? "",
+                    price: i.price,
+                    quota: i.quota,
+                    availableQuota: i.quota,
+                },
+            })));
             const total = await tx.ticketType.aggregate({
                 _sum: { quota: true },
                 where: { eventId },
@@ -265,7 +264,7 @@ async function addTicketTypes(eventId, items) {
             await tx.event.update({
                 where: { id: event.id },
                 data: {
-                    availableSeats: (_a = total._sum.quota) !== null && _a !== void 0 ? _a : 0,
+                    availableSeats: total._sum.quota ?? 0,
                 },
             });
             return created;
@@ -347,8 +346,8 @@ async function getMyEvents(userId, params) {
     }
     if (minPrice || maxPrice) {
         filter.price = {
-            gte: minPrice !== null && minPrice !== void 0 ? minPrice : 0,
-            lte: maxPrice !== null && maxPrice !== void 0 ? maxPrice : Number.MAX_SAFE_INTEGER,
+            gte: minPrice ?? 0,
+            lte: maxPrice ?? Number.MAX_SAFE_INTEGER,
         };
     }
     const orderBy = sort === "oldest"

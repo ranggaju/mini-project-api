@@ -198,11 +198,14 @@ async function getAllUsersService() {
         },
     });
     // Map to match frontend expectations
-    return users.map((user) => (Object.assign(Object.assign({}, user), { _count: {
+    return users.map((user) => ({
+        ...user,
+        _count: {
             event: user._count.event,
             transaction: user._count.transaction,
             review: user._count.review,
-        } })));
+        },
+    }));
 }
 async function updateUserRoleService(userId, role) {
     const validRoles = ["ADMIN", "ORGANIZER", "CUSTOMER"];

@@ -23,14 +23,11 @@ function roleGuard(allowedRoles) {
 }
 // Helper untuk check specific role
 function isAdmin(req) {
-    var _a;
-    return ((_a = req.user) === null || _a === void 0 ? void 0 : _a.role.toUpperCase()) === 'ADMIN';
+    return req.user?.role.toUpperCase() === 'ADMIN';
 }
 function isOrganizer(req) {
-    var _a;
-    return ((_a = req.user) === null || _a === void 0 ? void 0 : _a.role.toUpperCase()) === 'ORGANIZER';
+    return req.user?.role.toUpperCase() === 'ORGANIZER';
 }
 function isCustomer(req) {
-    var _a;
-    return ((_a = req.user) === null || _a === void 0 ? void 0 : _a.role.toUpperCase()) === 'CUSTOMER';
+    return req.user?.role.toUpperCase() === 'CUSTOMER';
 }
