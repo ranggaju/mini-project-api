@@ -9,6 +9,8 @@ import {
   publihsEventController,
   cancelEventController,
   createTicketTypesController,
+  updateTicketTypeController,
+  deleteTicketTypeController,
   createVoucherController,
 } from "../controllers/event.controller";
 import { authMiddleware, roleGuard } from "../middlewares/auth.middleware";
@@ -30,6 +32,7 @@ eventRouter.post(
   validateRequest(eventCreateSchema),
   createEventController
 );
+
 eventRouter.patch(
   "/:id",
   authMiddleware,
@@ -37,26 +40,32 @@ eventRouter.patch(
   validateRequest(eventCreateSchema),
   updateEventController
 );
+
 eventRouter.get("/", getAllEventsController);
+
 eventRouter.get("/categories", getEventCategoriesController);
+
 eventRouter.get(
   "/me",
   authMiddleware,
   roleGuard(["ADMIN", "ORGANIZER"]),
   getMyEventsController
 );
+
 eventRouter.patch(
   "/:id/publish",
   authMiddleware,
   roleGuard(["ADMIN", "ORGANIZER"]),
   publihsEventController
 );
+
 eventRouter.patch(
   "/:id/cancel",
   authMiddleware,
   roleGuard(["ADMIN", "ORGANIZER"]),
   cancelEventController
 );
+
 eventRouter.post(
   "/:id/tickets",
   authMiddleware,
@@ -64,6 +73,21 @@ eventRouter.post(
   validateRequest(ticketTypeCreateSchema),
   createTicketTypesController
 );
+
+eventRouter.patch(
+  "/:id/tickets/:ticketId",
+  authMiddleware,
+  roleGuard(["ADMIN", "ORGANIZER"]),
+  updateTicketTypeController
+);
+
+eventRouter.delete(
+  "/:id/tickets/:ticketId",
+  authMiddleware,
+  roleGuard(["ADMIN", "ORGANIZER"]),
+  deleteTicketTypeController
+);
+
 eventRouter.post(
   "/:id/vouchers",
   authMiddleware,
@@ -71,6 +95,7 @@ eventRouter.post(
   validateRequest(voucherCreateSchema),
   createVoucherController
 );
+
 eventRouter.get("/:slug", getEventBySlugController);
 
 export default eventRouter;
