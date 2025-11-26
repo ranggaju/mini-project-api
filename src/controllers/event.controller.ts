@@ -13,8 +13,6 @@ import {
 import { Prisma } from "@prisma/client";
 import { Token } from "../middlewares/auth.middleware";
 import { toSlug } from "../lib/slug";
-import { success } from "zod";
-import { tr } from "zod/v4/locales";
 
 export async function createEventController(
   req: Request,
