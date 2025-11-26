@@ -139,10 +139,9 @@ async function updateUserRole(req, res) {
     }
 }
 async function deleteUser(req, res) {
-    var _a;
     try {
         const { userId } = req.params;
-        const currentUserId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const currentUserId = req.user?.id;
         if (!currentUserId) {
             return res.status(401).json({ error: "Unauthorized" });
         }

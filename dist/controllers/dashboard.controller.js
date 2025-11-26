@@ -15,9 +15,8 @@ exports.getAdminUserGrowth = getAdminUserGrowth;
 const dashboard_service_1 = require("../services/dashboard.service");
 //CUSTOMER CONTROLLERS
 async function getCustomerStats(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -33,9 +32,8 @@ async function getCustomerStats(req, res) {
     }
 }
 async function getCustomerUpcomingEvents(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -51,9 +49,8 @@ async function getCustomerUpcomingEvents(req, res) {
     }
 }
 async function getCustomerRecentActivity(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -70,9 +67,8 @@ async function getCustomerRecentActivity(req, res) {
 }
 //ORGANIZER CONTROLLERS
 async function getOrganizerStats(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -88,9 +84,8 @@ async function getOrganizerStats(req, res) {
     }
 }
 async function getOrganizerEvents(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -106,9 +101,8 @@ async function getOrganizerEvents(req, res) {
     }
 }
 async function getOrganizerWeeklySales(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -124,9 +118,8 @@ async function getOrganizerWeeklySales(req, res) {
     }
 }
 async function getOrganizerTransactions(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -142,9 +135,8 @@ async function getOrganizerTransactions(req, res) {
     }
 }
 async function deleteOrganizerEvent(req, res) {
-    var _a;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        const userId = req.user?.id;
         const eventId = req.params.id;
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized" });

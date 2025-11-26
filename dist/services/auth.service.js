@@ -84,7 +84,6 @@ async function verifyService(token, params) {
         const hashedPassword = (0, bcrypt_1.hashSync)(params.password, salt);
         const newReferralCode = (0, nanoid_1.nanoid)(8).toUpperCase();
         await prisma_1.default.$transaction(async (tx) => {
-            var _a;
             const newUser = await tx.user.create({
                 data: {
                     firstname: params.firstname,
@@ -92,7 +91,7 @@ async function verifyService(token, params) {
                     email: params.email,
                     password: hashedPassword,
                     refferalCode: newReferralCode,
-                    role: (_a = params.role) !== null && _a !== void 0 ? _a : "CUSTOMER",
+                    role: params.role ?? "CUSTOMER",
                     isVerified: true,
                 },
             });

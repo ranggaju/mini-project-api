@@ -16,7 +16,7 @@ function registerTokenMiddleware(req, res, next) {
         console.log("🔑 Extracted Token:", token);
         const decoded = (0, jsonwebtoken_1.verify)(token, env_config_1.SECRET_KEY);
         console.log("🧩 Decoded Payload:", decoded);
-        if (!(decoded === null || decoded === void 0 ? void 0 : decoded.email)) {
+        if (!decoded?.email) {
             console.log("❌ Invalid or expired token payload");
             throw (0, customError_1.createCustomError)(403, "Invalid or expired token");
         }

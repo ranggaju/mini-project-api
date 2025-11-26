@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2017", // Or a newer target like "es2020" for modern Node.js versions
+    "target": "es2020", // Or a newer target like "es2020" for modern Node.js versions
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist", // Output directory for compiled JavaScript files
     "rootDir": "./src", // Root directory of your TypeScript source files
     "strict": true,
