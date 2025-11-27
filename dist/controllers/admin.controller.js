@@ -124,6 +124,8 @@ async function updateUserRole(req, res) {
     try {
         const { userId } = req.params;
         const { role } = req.body;
+        console.log('🎯 User ID from params:', userId);
+        console.log('🎯 Role from body:', role);
         const user = await (0, admin_service_1.updateUserRoleService)(userId, role);
         res.json({
             message: "User role updated successfully",
