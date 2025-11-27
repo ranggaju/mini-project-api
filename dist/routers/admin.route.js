@@ -15,7 +15,7 @@ router.patch('/events/:eventId/reject', admin_controller_1.rejectEvent);
 router.delete('/events/:eventId', admin_controller_1.deleteEvent);
 // User Management
 router.get('/users', admin_controller_1.getAllUsers);
-router.patch('/users/:id/role', admin_controller_1.updateUserRole);
+router.patch('/users/:userId/role', admin_controller_1.updateUserRole);
 router.delete('/users/:id', admin_controller_1.deleteUser);
 // Transaction Management
 router.get('/transactions', admin_controller_1.getAllTransactions);
